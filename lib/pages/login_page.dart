@@ -1,4 +1,6 @@
 import 'package:carros/pages/home_page.dart';
+import 'package:carros/pages/login_api.dart';
+import 'package:carros/pages/usuario.dart';
 import 'package:carros/utils/nav.dart';
 import 'package:carros/widgets/app_button.dart';
 import 'package:carros/widgets/app_text.dart';
@@ -59,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 29,
           ),
-          AppButton("Login", onPressed: _onClickLogin)
+          AppButton("Login", onPressed: _onClickLogin),
         ]),
       ),
     );
@@ -82,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
     return null;
   }
 
-  void _onClickLogin() {
+  void _onClickLogin() async {
     if (!_formKey.currentState.validate()) {
       return;
     }
@@ -90,6 +92,11 @@ class _LoginPageState extends State<LoginPage> {
     String login = _tLogin.text;
     String senha = _tSenha.text;
 
-    push(context, HomePage());
+    Usuario usuario = await LoginApi.login(login, senha);
+    if (usuario != null) {
+      push(context, HomePage());
+    } else {
+      print('Login incorreto');
+    }
   }
 }
