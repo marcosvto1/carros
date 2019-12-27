@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:carros/pages/api_response.dart';
 import 'package:carros/pages/carro/home_page.dart';
 import 'package:carros/pages/login/login_api.dart';
+import 'package:carros/pages/login/login_bloc.dart';
 import 'package:carros/pages/login/usuario.dart';
 import 'package:carros/utils/alert.dart';
 import 'package:carros/utils/nav.dart';
@@ -16,10 +19,14 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
+
   var _tLogin = TextEditingController();
+
   var _tSenha = TextEditingController();
+
+  final _loginBloc = LoginBloc();
+
   final _focusSenha = FocusNode();
-  bool _showProgress = false;
 
   @override
   void initState() {
@@ -30,6 +37,12 @@ class _LoginPageState extends State<LoginPage> {
         push(context, HomePage(), replace: true);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _loginBloc.dispose();
   }
 
   @override
@@ -67,11 +80,16 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
             height: 29,
           ),
-          AppButton(
-            "Login",
-            onPressed: _onClickLogin,
-            showProgress: _showProgress,
-          ),
+          StreamBuilder<bool>(
+              stream: _loginBloc.stream,
+              initialData: false,
+              builder: (context, snapshot) {
+                return AppButton(
+                  "Login",
+                  onPressed: _onClickLogin,
+                  showProgress: snapshot.data,
+                );
+              }),
         ]),
       ),
     );
@@ -95,17 +113,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _onClickLogin() async {
-    setState(() {
-      _showProgress = true;
-    });
     if (!_formKey.currentState.validate()) {
       return;
     }
-
     String login = _tLogin.text;
     String senha = _tSenha.text;
-
-    ApiResponse response = await LoginApi.login(login, senha);
+    ApiResponse response = await _loginBloc.login(login, senha);
 
     if (response.ok) {
       Usuario usuario = response.result;
@@ -113,9 +126,5 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       alert(context, response.msg, 'Login');
     }
-
-    setState(() {
-      _showProgress = false;
-    });
   }
 }
