@@ -24,6 +24,12 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    Future<Usuario> usuario = Usuario.get();
+    usuario.then((Usuario usuario) {
+      if (usuario != null) {
+        push(context, HomePage(), replace: true);
+      }
+    });
   }
 
   @override
@@ -103,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (response.ok) {
       Usuario usuario = response.result;
-      push(context, HomePage(usuario));
+      push(context, HomePage());
     } else {
       alert(context, response.msg, 'Login');
     }
