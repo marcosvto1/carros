@@ -8,63 +8,13 @@ import 'package:carros/utils/nav.dart';
 import 'package:carros/widgets/text_error.dart';
 import 'package:flutter/material.dart';
 
-class CarrosListView extends StatefulWidget {
-  String tipo;
-
-  CarrosListView(this.tipo);
-
-  @override
-  _CarrosListViewState createState() => _CarrosListViewState();
-}
-
-class _CarrosListViewState extends State<CarrosListView>
-    with AutomaticKeepAliveClientMixin<CarrosListView> {
+class CarrosListView extends StatelessWidget {
   List<Carro> carros;
 
-  final _carroBloc = CarrosBloc();
-
-  String get tipo => widget.tipo;
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _carroBloc.fetch(tipo);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _carroBloc.dispose();
-  }
+  CarrosListView(this.carros);
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
-    return StreamBuilder(
-      stream: _carroBloc.stream,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return TextError("Não foi possível buscar os carros");
-        }
-
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        List<Carro> carros = snapshot.data;
-        return _listView(carros);
-      },
-    );
-  }
-
-  Container _listView(List<Carro> carros) {
     return Container(
       padding: EdgeInsets.all(16),
       child: ListView.builder(
@@ -101,7 +51,7 @@ class _CarrosListViewState extends State<CarrosListView>
                     children: <Widget>[
                       FlatButton(
                           child: const Text('Detalhes'),
-                          onPressed: () => _onClickCarro(carro)),
+                          onPressed: () => _onClickCarro(context, carro)),
                       FlatButton(
                         child: const Text('Share'),
                         onPressed: () {/* ... */},
@@ -117,7 +67,13 @@ class _CarrosListViewState extends State<CarrosListView>
     );
   }
 
-  _onClickCarro(Carro carro) {
+  _onClickCarro(BuildContext context, Carro carro) {
     push(context, CarroPage(carro));
+  }
+
+  Future<void> _onRefresh() {
+    return Future.delayed(Duration(seconds: 3), () {
+      print('aqui on refresh');
+    });
   }
 }
