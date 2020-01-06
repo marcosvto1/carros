@@ -113,7 +113,7 @@ class _CarroPageState extends State<CarroPage> {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          text(widget.carro.desc, fontSize: 16),
+          text(widget.carro.descricao, fontSize: 16),
           SizedBox(
             height: 20,
           ),

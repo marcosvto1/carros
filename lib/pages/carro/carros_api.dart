@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:carros/pages/favoritos/carro_dao.dart';
 import 'package:carros/pages/login/usuario.dart';
 
 import 'carro.dart';
@@ -33,7 +34,7 @@ class CarrosApi {
       List mapResponse = json.decode(jsonResponse);
 
       List<Carro> carros =
-          mapResponse.map<Carro>((map) => Carro.fromJson(map)).toList();
+          mapResponse.map<Carro>((map) => Carro.fromMap(map)).toList();
 
       return carros;
     } catch (error, exception) {

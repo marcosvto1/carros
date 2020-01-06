@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carros/pages/carro/carro.dart';
 import 'package:carros/pages/carro/carro_page.dart';
 import 'package:carros/pages/carro/carros_api.dart';
@@ -29,10 +30,13 @@ class CarrosListView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Center(
-                    child: Image.network(
-                      carro.urlFoto ??
-                          'https://http2.mlstatic.com/mitsubishi-eclipse-gst-D_NQ_NP_675747-MLB30040697533_042019-F.jpg',
+                    child: CachedNetworkImage(
+                      imageUrl: carro.urlFoto,
                       width: 250,
+                      placeholder: (context, url) =>
+                          new CircularProgressIndicator(),
+                      errorWidget: (context, url, erro) =>
+                          new Icon(Icons.error),
                     ),
                   ),
                   Text(
